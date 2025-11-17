@@ -25,11 +25,11 @@ namespace Camera
             foreach ((var thirdPersonCameraRef, var controlRef) in SystemAPI
                 .Query<RefRW<ThirdPersonCameraComponent>, RefRO<CameraControlComponent>>())
             {
-                thirdPersonCameraRef.ValueRW.CurrentTheta += controlRef.ValueRO.LookDelta.x * SystemAPI.Time.DeltaTime;
+                thirdPersonCameraRef.ValueRW.CurrentTheta += controlRef.ValueRO.LookDelta.x;
                 if (thirdPersonCameraRef.ValueRW.CurrentTheta >= 360) thirdPersonCameraRef.ValueRW.CurrentTheta -= 360;
                 if (thirdPersonCameraRef.ValueRW.CurrentTheta < 0) thirdPersonCameraRef.ValueRW.CurrentTheta += 360;
                 
-                thirdPersonCameraRef.ValueRW.CurrentPhi += controlRef.ValueRO.LookDelta.y * SystemAPI.Time.DeltaTime;
+                thirdPersonCameraRef.ValueRW.CurrentPhi += controlRef.ValueRO.LookDelta.y;
                 thirdPersonCameraRef.ValueRW.CurrentPhi = math.clamp(
                     thirdPersonCameraRef.ValueRW.CurrentPhi,
                     -89.9f,

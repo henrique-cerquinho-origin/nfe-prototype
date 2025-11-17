@@ -1,8 +1,5 @@
-using Input;
-using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics;
 using Unity.Transforms;
 
 namespace Camera
@@ -11,7 +8,6 @@ namespace Camera
     {
         public void OnCreate(ref SystemState state)
         {
-            // state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<MainCameraEntityComponent>();
             state.RequireForUpdate(
                 SystemAPI.QueryBuilder()
@@ -25,11 +21,10 @@ namespace Camera
             Entity mainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityComponent>();
             foreach (var thirdPersonCameraRef in SystemAPI.Query<RefRW<ThirdPersonCameraComponent>>())
             {
-                var targetTransform = SystemAPI.GetComponent<LocalTransform>(thirdPersonCameraRef.ValueRO.LookAt);
-                float3 cameraTargetUp = math.mul(targetTransform.Rotation, math.up());
+                var targetTransform = SystemAPI.GetComponent<LocalToWorld>(thirdPersonCameraRef.ValueRO.LookAt);
                 quaternion spherePos = quaternion.Euler(
-                    thirdPersonCameraRef.ValueRO.CurrentPhi,
-                    thirdPersonCameraRef.ValueRO.CurrentTheta,
+                    thirdPersonCameraRef.ValueRO.CurrentPhi * math.TORADIANS,
+                    thirdPersonCameraRef.ValueRO.CurrentTheta * math.TORADIANS,
                     0
                 );
                 float3 cameraVector = math.mul(
@@ -42,7 +37,7 @@ namespace Camera
                     spherePos,
                     math.forward() * thirdPersonCameraRef.ValueRO.CurrentDistance
                 );
-                cameraTransformRef.ValueRW.Rotation = quaternion.LookRotationSafe(-cameraVector, cameraTargetUp);
+                cameraTransformRef.ValueRW.Rotation = quaternion.LookRotationSafe(-cameraVector, math.up());
             }
         }
     }

@@ -1,7 +1,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace Input
+namespace Camera
 {
     public struct CameraControlComponent : IComponentData
     {
