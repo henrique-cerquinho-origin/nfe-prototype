@@ -7,8 +7,9 @@ using Unity.Transforms;
 
 namespace Player
 {
+    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    public partial struct PlayerMoveSystem : ISystem
+    public partial struct PlayerMoveServerSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
         {

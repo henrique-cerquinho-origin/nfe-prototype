@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Input
 {
+    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
     public partial class PlayerInputSystem : SystemBase
     {
         private PlayerInputActions.PlayerActions _defaultActionsMap;
@@ -35,7 +36,6 @@ namespace Input
                 }
                 
                 playerInputsRef.ValueRW.MoveDelta = _defaultActionsMap.Move.ReadValue<Vector2>();
-
                 SystemAPI.GetComponentRW<CameraControlComponent>(playerCameraRef.ValueRO.Camera)
                     .ValueRW.LookDelta = playerInputsRef.ValueRW.LookDelta;
             }

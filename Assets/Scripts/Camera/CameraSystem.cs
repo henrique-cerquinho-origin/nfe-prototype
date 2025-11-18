@@ -6,6 +6,7 @@ using Unity.Transforms;
 
 namespace Camera
 {
+    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial struct CameraSystem : ISystem
     {

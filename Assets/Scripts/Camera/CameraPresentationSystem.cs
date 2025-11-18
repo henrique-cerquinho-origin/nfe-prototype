@@ -3,6 +3,7 @@ using Unity.Transforms;
 
 namespace Camera
 {
+    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     public partial class CameraPresentationSystem : SystemBase
     {

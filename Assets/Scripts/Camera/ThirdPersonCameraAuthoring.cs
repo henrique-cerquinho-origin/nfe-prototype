@@ -13,9 +13,6 @@ namespace Camera
         [Header("Distance")]
         public float StartDistance = 5f;
 
-        [Header("Target")]
-        public GameObject LookAt;
-
         public class Baker : Baker<ThirdPersonCameraAuthoring>
         {
             public override void Bake(ThirdPersonCameraAuthoring authoring)
@@ -28,8 +25,7 @@ namespace Camera
                     {
                         CurrentPhi = authoring.InitialPhi,
                         CurrentTheta = authoring.InitialTheta,
-                        CurrentDistance = authoring.StartDistance,
-                        LookAt = GetEntity(authoring.LookAt, TransformUsageFlags.Dynamic)
+                        CurrentDistance = authoring.StartDistance
                     }
                 );
                 // SetComponentEnabled<ThirdPersonCameraComponent>(entity, false);
