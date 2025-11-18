@@ -32,6 +32,8 @@ namespace Input
                 {
                     playerInputsRef.ValueRW.LookDelta = _defaultActionsMap.LookDelta.ReadValue<Vector2>();
                 }
+                
+                playerInputsRef.ValueRW.MoveDelta = _defaultActionsMap.Move.ReadValue<Vector2>();
 
                 if (SystemAPI.HasComponent<CameraControlComponent>(playerInputsRef.ValueRO.ControllingCamera))
                 {

@@ -4,6 +4,7 @@ using Unity.Transforms;
 
 namespace Camera
 {
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial struct CameraSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
