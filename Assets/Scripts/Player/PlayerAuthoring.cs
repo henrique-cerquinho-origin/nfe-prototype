@@ -13,11 +13,12 @@ namespace Input
             public override void Bake(PlayerAuthoring authoring)
             {
                 Entity entity = GetEntity(TransformUsageFlags.None);
+                AddComponent(entity, new PlayerInputComponent());
                 AddComponent(
                     entity,
-                    new PlayerInputComponent
+                    new PlayerCameraRefComponent
                     {
-                        ControllingCamera = GetEntity(authoring.ControllingCamera, TransformUsageFlags.Dynamic)
+                        Camera = GetEntity(authoring.ControllingCamera, TransformUsageFlags.Dynamic)
                     }
                 );
             }

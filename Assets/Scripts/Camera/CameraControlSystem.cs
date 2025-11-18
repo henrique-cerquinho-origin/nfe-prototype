@@ -1,9 +1,5 @@
-using Input;
-using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Physics;
-using Unity.Transforms;
 
 namespace Camera
 {
@@ -12,7 +8,6 @@ namespace Camera
     {
         public void OnCreate(ref SystemState state)
         {
-            // state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate(
                 SystemAPI.QueryBuilder()
                     .WithAll<ThirdPersonCameraComponent, CameraControlComponent>()
@@ -32,8 +27,8 @@ namespace Camera
                 thirdPersonCameraRef.ValueRW.CurrentPhi += controlRef.ValueRO.LookDelta.y;
                 thirdPersonCameraRef.ValueRW.CurrentPhi = math.clamp(
                     thirdPersonCameraRef.ValueRW.CurrentPhi,
-                    -89.9f,
-                    89.9f
+                    -89.999f,
+                    89.999f
                 );
             }
         }

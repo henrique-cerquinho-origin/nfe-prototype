@@ -7,7 +7,5 @@ namespace Input
     {
         public float2 MoveDelta;
         public float2 LookDelta;
-
-        public Entity ControllingCamera;
     }
 }

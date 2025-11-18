@@ -17,12 +17,13 @@ namespace Input
             _defaultActionsMap = inputActions.Player;
         
             // RequireForUpdate<FixedTickSystem.Singleton>();
-            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent>().Build());
+            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent, PlayerCameraRefComponent>().Build());
         }
 
         protected override void OnUpdate()
         {
-            foreach (RefRW<PlayerInputComponent> playerInputsRef in SystemAPI.Query<RefRW<PlayerInputComponent>>())
+            foreach ((var playerInputsRef, var playerCameraRef) in SystemAPI
+                .Query<RefRW<PlayerInputComponent>, RefRO<PlayerCameraRefComponent>>())
             {
                 if (!_defaultActionsMap.Look.IsPressed())
                 {
@@ -35,11 +36,8 @@ namespace Input
                 
                 playerInputsRef.ValueRW.MoveDelta = _defaultActionsMap.Move.ReadValue<Vector2>();
 
-                if (SystemAPI.HasComponent<CameraControlComponent>(playerInputsRef.ValueRO.ControllingCamera))
-                {
-                    SystemAPI.GetComponentRW<CameraControlComponent>(playerInputsRef.ValueRO.ControllingCamera)
-                        .ValueRW.LookDelta = playerInputsRef.ValueRW.LookDelta;
-                }
+                SystemAPI.GetComponentRW<CameraControlComponent>(playerCameraRef.ValueRO.Camera)
+                    .ValueRW.LookDelta = playerInputsRef.ValueRW.LookDelta;
             }
         }
     }
