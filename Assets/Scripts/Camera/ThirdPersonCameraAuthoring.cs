@@ -1,5 +1,4 @@
-﻿using Input;
-using Unity.Entities;
+﻿using Unity.Entities;
 using UnityEngine;
 
 namespace Camera
@@ -33,6 +32,7 @@ namespace Camera
                         LookAt = GetEntity(authoring.LookAt, TransformUsageFlags.Dynamic)
                     }
                 );
+                // SetComponentEnabled<ThirdPersonCameraComponent>(entity, false);
                 AddComponent(entity, new CameraControlComponent());
             }
         }

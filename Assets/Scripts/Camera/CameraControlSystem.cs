@@ -17,16 +17,21 @@ namespace Camera
 
         public void OnUpdate(ref SystemState state)
         {
-            foreach ((var thirdPersonCameraRef, var controlRef) in SystemAPI
-                .Query<RefRW<ThirdPersonCameraComponent>, RefRO<CameraControlComponent>>())
+            var job = new Job();
+            state.Dependency = job.ScheduleParallel(state.Dependency);
+        }
+
+        private partial struct Job : IJobEntity
+        {
+            public void Execute(ref ThirdPersonCameraComponent camera, in CameraControlComponent cameraControl)
             {
-                thirdPersonCameraRef.ValueRW.CurrentTheta += controlRef.ValueRO.LookDelta.x;
-                if (thirdPersonCameraRef.ValueRW.CurrentTheta >= 360) thirdPersonCameraRef.ValueRW.CurrentTheta -= 360;
-                if (thirdPersonCameraRef.ValueRW.CurrentTheta < 0) thirdPersonCameraRef.ValueRW.CurrentTheta += 360;
+                camera.CurrentTheta += cameraControl.LookDelta.x;
+                if (camera.CurrentTheta >= 360) camera.CurrentTheta -= 360;
+                if (camera.CurrentTheta < 0) camera.CurrentTheta += 360;
                 
-                thirdPersonCameraRef.ValueRW.CurrentPhi += controlRef.ValueRO.LookDelta.y;
-                thirdPersonCameraRef.ValueRW.CurrentPhi = math.clamp(
-                    thirdPersonCameraRef.ValueRW.CurrentPhi,
+                camera.CurrentPhi += cameraControl.LookDelta.y;
+                camera.CurrentPhi = math.clamp(
+                    camera.CurrentPhi,
                     -89.999f,
                     89.999f
                 );

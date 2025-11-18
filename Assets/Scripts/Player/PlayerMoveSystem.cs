@@ -1,10 +1,11 @@
+using Camera;
 using Input;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
 using Unity.Transforms;
 
-namespace Camera
+namespace Player
 {
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial struct PlayerMoveSystem : ISystem
