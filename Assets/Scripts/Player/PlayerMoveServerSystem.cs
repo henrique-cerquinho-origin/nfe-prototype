@@ -26,9 +26,9 @@ namespace Player
                 .Query<RefRW<PhysicsVelocity>, RefRO<PlayerInputComponent>, RefRO<PlayerCameraRefComponent>,
                     RefRW<LocalTransform>>())
             {
-                var camera = SystemAPI.GetComponent<ThirdPersonCameraComponent>(playerCameraRef.ValueRO.Camera);
+                // var camera = SystemAPI.GetComponent<ThirdPersonCameraComponent>(playerCameraRef.ValueRO.Camera);
                 physicsVelocityRef.ValueRW.Linear = math.mul(
-                    quaternion.Euler(0, (camera.CurrentTheta + 180) * math.TORADIANS, 0),
+                    quaternion.identity,
                     new float3(
                         inputRef.ValueRO.MoveDelta.x * 10,
                         physicsVelocityRef.ValueRW.Linear.y,

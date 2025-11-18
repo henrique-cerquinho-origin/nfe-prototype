@@ -1,9 +1,10 @@
 using Unity.Entities;
+using Unity.NetCode;
 
 namespace Player
 {
     public struct PlayerNetworkId : IComponentData
     {
-        public int NetworkId;
+        [GhostField] public uint NetworkId;
     }
 }

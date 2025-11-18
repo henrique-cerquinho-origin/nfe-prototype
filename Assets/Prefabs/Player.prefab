@@ -154,9 +154,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6019785501506645442}
   - component: {fileID: 7358155822274288277}
-  - component: {fileID: 3725670643765064127}
   - component: {fileID: 791079366992280710}
   - component: {fileID: 3571196111660704531}
+  - component: {fileID: -2522593924045180119}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -208,19 +208,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &3725670643765064127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8542548765367978857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4dd194bb89d9425885f0881afb91b745, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Input.PlayerAuthoring
-  ControllingCamera: {fileID: 0}
 --- !u!114 &791079366992280710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,3 +246,16 @@ MonoBehaviour:
   UseSingleBaseline: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
+--- !u!114 &-2522593924045180119
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8542548765367978857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dd194bb89d9425885f0881afb91b745, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Input.PlayerAuthoring
+  ControllingCamera: {fileID: 0}
