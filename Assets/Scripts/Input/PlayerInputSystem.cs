@@ -1,12 +1,13 @@
-using Camera;
-using Player;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.NetCode;
 using UnityEngine;
 
 namespace Input
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
+    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
+    [UpdateInGroup(typeof(GhostInputSystemGroup))]
+    [AlwaysSynchronizeSystem]
     public partial class PlayerInputSystem : SystemBase
     {
         private PlayerInputActions.PlayerActions _defaultActionsMap;

@@ -30,6 +30,7 @@ namespace Player
                 ecb.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(0, 3, 0)));
                 ecb.SetComponent(playerEntity, new PlayerNetworkId { NetworkId = (uint)networkIdRef.ValueRO.Value });
                 ecb.AddComponent(connectionEntity, new ConnectionPlayerRefComponent { Player = playerEntity });
+                ecb.AddComponent(playerEntity, new GhostOwner { NetworkId = networkIdRef.ValueRO.Value });
             }
             
             ecb.Playback(state.EntityManager);

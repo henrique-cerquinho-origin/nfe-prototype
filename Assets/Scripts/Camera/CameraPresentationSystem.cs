@@ -9,10 +9,7 @@ namespace Camera
     {
         protected override void OnUpdate()
         {
-            if (MainCameraGameObject.Instance == null || !SystemAPI.HasSingleton<MainCameraEntityTag>())
-            {
-                return;
-            }
+            if (MainCameraGameObject.Instance == null || !SystemAPI.HasSingleton<MainCameraEntityTag>()) return;
             
             Entity mainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityTag>();
             var targetLocalToWorld = SystemAPI.GetComponent<LocalToWorld>(mainCameraEntity);

@@ -7,7 +7,8 @@ using Unity.Transforms;
 namespace Camera
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+    // [UpdateInGroup(typeof(VariableRateSimulationSystemGroup))]
+    [UpdateAfter(typeof(CameraControlSystem))]
     public partial struct CameraSystem : ISystem
     {
         private ComponentLookup<LocalToWorld> _localToWorldLookup;

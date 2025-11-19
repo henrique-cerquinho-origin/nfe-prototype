@@ -14,20 +14,18 @@ namespace Player
         {
             state.RequireForUpdate(
                 SystemAPI.QueryBuilder()
-                    .WithAll<PhysicsVelocity, PlayerInputComponent, PlayerCameraRefComponent, LocalTransform>()
+                    .WithAll<PhysicsVelocity, PlayerInputComponent, LocalTransform>()
                     .Build()
             );
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            foreach ((var physicsVelocityRef, var inputRef, var playerCameraRef, var localTransformRef) in SystemAPI
-                .Query<RefRW<PhysicsVelocity>, RefRO<PlayerInputComponent>, RefRO<PlayerCameraRefComponent>,
-                    RefRW<LocalTransform>>())
+            foreach ((var physicsVelocityRef, var inputRef, var localTransformRef) in SystemAPI
+                .Query<RefRW<PhysicsVelocity>, RefRO<PlayerInputComponent>, RefRW<LocalTransform>>())
             {
-                // var camera = SystemAPI.GetComponent<ThirdPersonCameraComponent>(playerCameraRef.ValueRO.Camera);
                 physicsVelocityRef.ValueRW.Linear = math.mul(
-                    quaternion.identity,
+                    quaternion.Euler(0, math.radians(inputRef.ValueRO.CurrentCameraAngle + 180), 0),
                     new float3(
                         inputRef.ValueRO.MoveDelta.x * 10,
                         physicsVelocityRef.ValueRW.Linear.y,

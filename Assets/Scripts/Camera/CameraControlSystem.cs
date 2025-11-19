@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Input;
 using Player;
 using Unity.Collections;
@@ -8,8 +7,8 @@ using Unity.Mathematics;
 namespace Camera
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateBefore(typeof(CameraSystem))]
+    // [UpdateInGroup(typeof(VariableRateSimulationSystemGroup))]
+    [UpdateAfter(typeof(PlayerInputSystem))]
     public partial struct CameraControlSystem : ISystem
     {
         private ComponentLookup<ThirdPersonCameraComponent> _cameraLookup;
@@ -36,7 +35,7 @@ namespace Camera
             [NativeDisableParallelForRestriction]
             public ComponentLookup<ThirdPersonCameraComponent> CameraLookup;
             
-            public void Execute(in PlayerInputComponent playerInput, in PlayerCameraRefComponent playerCameraRef)
+            public void Execute(ref PlayerInputComponent playerInput, in PlayerCameraRefComponent playerCameraRef)
             {
                 ThirdPersonCameraComponent camera = CameraLookup[playerCameraRef.Camera];
                 camera.CurrentTheta += playerInput.LookDelta.x;
@@ -50,6 +49,8 @@ namespace Camera
                     89.999f
                 );
                 CameraLookup[playerCameraRef.Camera] = camera;
+
+                playerInput.CurrentCameraAngle = camera.CurrentTheta;
             }
         }
     }
