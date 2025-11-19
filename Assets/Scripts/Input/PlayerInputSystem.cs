@@ -22,6 +22,7 @@ namespace Input
             _defaultActionsMap = inputActions.Player;
 
             RequireForUpdate<CommandTarget>();
+            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerCameraRefComponent>().Build());
         }
 
         protected override void OnUpdate()
