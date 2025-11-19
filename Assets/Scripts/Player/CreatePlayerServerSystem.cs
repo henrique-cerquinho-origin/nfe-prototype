@@ -29,8 +29,10 @@ namespace Player
                 Entity playerEntity = ecb.Instantiate(references.PlayerPrefab);
                 ecb.SetComponent(playerEntity, LocalTransform.FromPosition(new float3(0, 3, 0)));
                 ecb.SetComponent(playerEntity, new PlayerNetworkId { NetworkId = (uint)networkIdRef.ValueRO.Value });
-                ecb.AddComponent(connectionEntity, new ConnectionPlayerRefComponent { Player = playerEntity });
                 ecb.AddComponent(playerEntity, new GhostOwner { NetworkId = networkIdRef.ValueRO.Value });
+                
+                ecb.AddComponent(connectionEntity, new ConnectionPlayerRefComponent { Player = playerEntity });
+                ecb.AddComponent(connectionEntity, new CommandTarget { targetEntity = playerEntity });
             }
             
             ecb.Playback(state.EntityManager);

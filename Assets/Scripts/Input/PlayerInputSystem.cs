@@ -1,3 +1,5 @@
+using Camera;
+using Player;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
@@ -11,31 +13,34 @@ namespace Input
     public partial class PlayerInputSystem : SystemBase
     {
         private PlayerInputActions.PlayerActions _defaultActionsMap;
-        
+
         protected override void OnCreate()
         {
             var inputActions = new PlayerInputActions();
             inputActions.Enable();
             inputActions.Player.Enable();
             _defaultActionsMap = inputActions.Player;
-            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent>().Build());
+
+            RequireForUpdate<CommandTarget>();
         }
 
         protected override void OnUpdate()
         {
-            foreach (var playerInputsRef in SystemAPI.Query<RefRW<PlayerInputComponent>>())
-            {
-                if (!_defaultActionsMap.Look.IsPressed())
-                {
-                    playerInputsRef.ValueRW.LookDelta = float2.zero;
-                }
-                else
-                {
-                    playerInputsRef.ValueRW.LookDelta = _defaultActionsMap.LookDelta.ReadValue<Vector2>();
-                }
-                
-                playerInputsRef.ValueRW.MoveDelta = _defaultActionsMap.Move.ReadValue<Vector2>();
-            }
+            Entity cmdTargetEnt = SystemAPI.GetSingletonEntity<CommandTarget>();
+            Entity targetPlayer = SystemAPI.GetComponentRO<CommandTarget>(cmdTargetEnt).ValueRO.targetEntity;
+            Entity cameraEntity = SystemAPI.GetComponentRO<PlayerCameraRefComponent>(targetPlayer).ValueRO.Camera;
+            var thirdPersonCamera = SystemAPI.GetComponent<ThirdPersonCameraComponent>(cameraEntity);
+            if (targetPlayer == Entity.Null) return;
+
+            Vector2 look = _defaultActionsMap.Look.IsPressed()
+                ? _defaultActionsMap.LookDelta.ReadValue<Vector2>()
+                : Vector2.zero;
+            var move = _defaultActionsMap.Move.ReadValue<Vector2>();
+
+            var inputRef = SystemAPI.GetComponentRW<PlayerInputComponent>(targetPlayer);
+            inputRef.ValueRW.LookDelta = new float2(look.x, look.y);
+            inputRef.ValueRW.MoveDelta = new float2(move.x, move.y);
+            inputRef.ValueRW.CurrentCameraAngle = thirdPersonCamera.CurrentTheta;
         }
     }
 }
