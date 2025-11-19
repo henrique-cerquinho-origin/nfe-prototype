@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Input
 {
-    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
+    [WorldSystemFilter(WorldSystemFilterFlags.ServerSimulation)]
     public partial class PlayerInputSystem : SystemBase
     {
         private PlayerInputActions.PlayerActions _defaultActionsMap;
@@ -17,14 +17,12 @@ namespace Input
             inputActions.Enable();
             inputActions.Player.Enable();
             _defaultActionsMap = inputActions.Player;
-            // RequireForUpdate<FixedTickSystem.Singleton>();
-            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent, PlayerCameraRefComponent>().Build());
+            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent>().Build());
         }
 
         protected override void OnUpdate()
         {
-            foreach ((var playerInputsRef, var playerCameraRef) in SystemAPI
-                .Query<RefRW<PlayerInputComponent>, RefRO<PlayerCameraRefComponent>>())
+            foreach (var playerInputsRef in SystemAPI.Query<RefRW<PlayerInputComponent>>())
             {
                 if (!_defaultActionsMap.Look.IsPressed())
                 {
@@ -36,8 +34,6 @@ namespace Input
                 }
                 
                 playerInputsRef.ValueRW.MoveDelta = _defaultActionsMap.Move.ReadValue<Vector2>();
-                SystemAPI.GetComponentRW<CameraControlComponent>(playerCameraRef.ValueRO.Camera)
-                    .ValueRW.LookDelta = playerInputsRef.ValueRW.LookDelta;
             }
         }
     }

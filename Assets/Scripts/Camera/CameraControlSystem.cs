@@ -1,40 +1,55 @@
+using System.ComponentModel;
+using Input;
+using Player;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Camera
 {
+    [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
+    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateBefore(typeof(CameraSystem))]
     public partial struct CameraControlSystem : ISystem
     {
+        private ComponentLookup<ThirdPersonCameraComponent> _cameraLookup;
+        
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate(
                 SystemAPI.QueryBuilder()
-                    .WithAll<ThirdPersonCameraComponent, CameraControlComponent>()
+                    .WithAll<PlayerInputComponent, PlayerCameraRefComponent>()
                     .Build()
             );
+            _cameraLookup = state.GetComponentLookup<ThirdPersonCameraComponent>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            var job = new Job();
+            _cameraLookup.Update(ref state);
+            var job = new Job { CameraLookup = _cameraLookup };
             state.Dependency = job.ScheduleParallel(state.Dependency);
         }
 
         private partial struct Job : IJobEntity
         {
-            public void Execute(ref ThirdPersonCameraComponent camera, in CameraControlComponent cameraControl)
+            [NativeDisableParallelForRestriction]
+            public ComponentLookup<ThirdPersonCameraComponent> CameraLookup;
+            
+            public void Execute(in PlayerInputComponent playerInput, in PlayerCameraRefComponent playerCameraRef)
             {
-                camera.CurrentTheta += cameraControl.LookDelta.x;
+                ThirdPersonCameraComponent camera = CameraLookup[playerCameraRef.Camera];
+                camera.CurrentTheta += playerInput.LookDelta.x;
                 if (camera.CurrentTheta >= 360) camera.CurrentTheta -= 360;
                 if (camera.CurrentTheta < 0) camera.CurrentTheta += 360;
                 
-                camera.CurrentPhi += cameraControl.LookDelta.y;
+                camera.CurrentPhi += playerInput.LookDelta.y;
                 camera.CurrentPhi = math.clamp(
                     camera.CurrentPhi,
                     -89.999f,
                     89.999f
                 );
+                CameraLookup[playerCameraRef.Camera] = camera;
             }
         }
     }

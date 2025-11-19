@@ -1,16 +1,18 @@
-using Camera;
-using UnityEngine;
 using Unity.Entities;
+using UnityEngine;
 
-[DisallowMultipleComponent]
-public class MainEntityCameraAuthoring : MonoBehaviour
+namespace Camera
 {
-    public class Baker : Baker<MainEntityCameraAuthoring>
+    [DisallowMultipleComponent]
+    public class MainEntityCameraAuthoring : MonoBehaviour
     {
-        public override void Bake(MainEntityCameraAuthoring authoring)
+        public class Baker : Baker<MainEntityCameraAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.Dynamic);
-            AddComponent<MainCameraEntityTag>(entity);
+            public override void Bake(MainEntityCameraAuthoring authoring)
+            {
+                Entity entity = GetEntity(TransformUsageFlags.Dynamic);
+                AddComponent<MainCameraEntityTag>(entity);
+            }
         }
     }
 }
