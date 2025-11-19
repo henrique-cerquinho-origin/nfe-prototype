@@ -7,6 +7,5 @@ namespace Camera
         public float CurrentPhi;
         public float CurrentTheta;
         public float CurrentDistance;
-        public Entity LookAt;
     }
 }

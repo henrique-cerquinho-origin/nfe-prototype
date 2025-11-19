@@ -258,4 +258,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dd194bb89d9425885f0881afb91b745, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Input.PlayerAuthoring
-  ControllingCamera: {fileID: 0}
+  LookAt: {fileID: 2341008599863298322}

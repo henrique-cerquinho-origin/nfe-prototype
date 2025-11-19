@@ -15,9 +15,10 @@ namespace Camera
         
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate<MainCameraEntityComponent>();
+            state.RequireForUpdate<MainCameraEntityTag>();
             state.RequireForUpdate(
                 SystemAPI.QueryBuilder()
+                    .WithAll<CameraLookAtComponent>()
                     .WithPresent<ThirdPersonCameraComponent>()
                     .Build()
             );
@@ -31,7 +32,7 @@ namespace Camera
             _localTransformLookup.Update(ref state);
             var job = new Job
             {
-                MainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityComponent>(),
+                MainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityTag>(),
                 LocalToWorldLookup = _localToWorldLookup,
                 LocalTransformLookup = _localTransformLookup
             };
@@ -49,10 +50,10 @@ namespace Camera
             [NativeDisableParallelForRestriction]
             public ComponentLookup<LocalTransform> LocalTransformLookup;
 
-            public void Execute(in ThirdPersonCameraComponent camera)
+            public void Execute(in ThirdPersonCameraComponent camera, in CameraLookAtComponent lookAt)
             {
-                if (!LocalToWorldLookup.HasComponent(camera.LookAt)) return;
-                LocalToWorld targetLTW = LocalToWorldLookup[camera.LookAt];
+                if (!LocalToWorldLookup.HasComponent(lookAt.LookAt)) return;
+                LocalToWorld targetLTW = LocalToWorldLookup[lookAt.LookAt];
 
                 quaternion sphereRot = quaternion.Euler(
                     math.radians(camera.CurrentPhi),

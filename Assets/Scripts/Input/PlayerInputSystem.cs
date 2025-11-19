@@ -1,4 +1,5 @@
 using Camera;
+using Player;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -16,7 +17,6 @@ namespace Input
             inputActions.Enable();
             inputActions.Player.Enable();
             _defaultActionsMap = inputActions.Player;
-        
             // RequireForUpdate<FixedTickSystem.Singleton>();
             RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent, PlayerCameraRefComponent>().Build());
         }

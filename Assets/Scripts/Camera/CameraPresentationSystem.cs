@@ -9,12 +9,12 @@ namespace Camera
     {
         protected override void OnUpdate()
         {
-            if (MainCameraGameObject.Instance == null || !SystemAPI.HasSingleton<MainCameraEntityComponent>())
+            if (MainCameraGameObject.Instance == null || !SystemAPI.HasSingleton<MainCameraEntityTag>())
             {
                 return;
             }
             
-            Entity mainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityComponent>();
+            Entity mainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityTag>();
             var targetLocalToWorld = SystemAPI.GetComponent<LocalToWorld>(mainCameraEntity);
             MainCameraGameObject.Instance.transform.SetPositionAndRotation(
                 targetLocalToWorld.Position,

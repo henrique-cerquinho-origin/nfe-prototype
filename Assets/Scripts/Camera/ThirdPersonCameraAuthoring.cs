@@ -30,6 +30,7 @@ namespace Camera
                 );
                 // SetComponentEnabled<ThirdPersonCameraComponent>(entity, false);
                 AddComponent(entity, new CameraControlComponent());
+                AddComponent(entity, new CameraLookAtComponent());
             }
         }
     }

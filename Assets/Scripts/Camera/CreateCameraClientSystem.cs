@@ -28,7 +28,8 @@ namespace Camera
 
             int localNetworkId = SystemAPI.GetSingleton<NetworkId>().Value;
 
-            foreach ((var playerNetworkId, var playerEntity) in SystemAPI.Query<RefRO<PlayerNetworkId>>()
+            foreach ((var playerNetworkId, var playerLookAtRef, var playerEntity) in SystemAPI
+                .Query<RefRO<PlayerNetworkId>, RefRO<PlayerLookAtRefComponent>>()
                 .WithNone<PlayerCameraRefComponent>()
                 .WithEntityAccess())
             {
@@ -36,6 +37,8 @@ namespace Camera
                 
                 Entity cameraEntity = ecb.Instantiate(references.CameraPrefab);
                 ecb.AddComponent(playerEntity, new PlayerCameraRefComponent { Camera = cameraEntity });
+                ecb.SetComponent(cameraEntity, new CameraLookAtComponent { LookAt = playerLookAtRef.ValueRO.LookAt });
+                
                 break;
             }
             

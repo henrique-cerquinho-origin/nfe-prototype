@@ -1,6 +1,6 @@
 using Unity.Entities;
 
-namespace Input
+namespace Player
 {
     public struct PlayerCameraRefComponent : IComponentData
     {
