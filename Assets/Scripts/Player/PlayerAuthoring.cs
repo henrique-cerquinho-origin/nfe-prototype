@@ -1,5 +1,6 @@
 using Input;
 using Unity.Entities;
+using Unity.Physics.GraphicsIntegration;
 using UnityEngine;
 
 namespace Player
@@ -7,6 +8,7 @@ namespace Player
     public class PlayerAuthoring : MonoBehaviour
     {
         [SerializeField] public GameObject LookAt;
+        [SerializeField] public GameObject Mesh;
         
         public class Baker : Baker<PlayerAuthoring>
         {
