@@ -20,7 +20,7 @@ namespace Input
             state.RequireForUpdate(
                 SystemAPI.QueryBuilder()
                     // `Simulate` is enough; keep `PredictedGhost` if you want to exclude non-predicted ghosts.
-                    .WithAll<Simulate, PhysicsVelocity, PlayerInputComponent, LocalTransform>()
+                    .WithAll<Simulate, PhysicsMass, PhysicsVelocity, PlayerInputComponent>()
                     .Build());
         }
 
@@ -30,8 +30,8 @@ namespace Input
             var netTime = SystemAPI.GetSingleton<NetworkTime>();
             bool isFinal = netTime.IsFinalPredictionTick;
 
-            foreach (var (velocityRef, inputRef, ltRef) in SystemAPI
-                .Query<RefRW<PhysicsVelocity>, RefRO<PlayerInputComponent>, RefRW<LocalTransform>>()
+            foreach (var (massRef, velocityRef, inputRef) in SystemAPI
+                .Query<RefRW<PhysicsMass>, RefRW<PhysicsVelocity>, RefRO<PlayerInputComponent>>()
                 .WithAll<Simulate>())
             {
                 float yaw = math.radians(inputRef.ValueRO.CurrentCameraAngle + 180f);
@@ -43,7 +43,7 @@ namespace Input
 
                 velocityRef.ValueRW.Linear  = math.mul(quaternion.Euler(0, yaw, 0), desiredVelocity);
                 velocityRef.ValueRW.Angular = float3.zero;
-                ltRef.ValueRW.Rotation = quaternion.identity;
+                massRef.ValueRW.InverseInertia.xz = 0;
 
                 if (isFinal)
                 {
