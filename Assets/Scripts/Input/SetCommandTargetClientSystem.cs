@@ -19,10 +19,10 @@ namespace Input
         {
             Entity cmdTargetEnt = SystemAPI.GetSingletonEntity<CommandTarget>();
             RefRW<CommandTarget> cmdTargetRef = SystemAPI.GetComponentRW<CommandTarget>(cmdTargetEnt);
-
+            
             if (cmdTargetRef.ValueRO.targetEntity != Entity.Null)
                 return;
-
+            
             foreach (var (_, entity) in SystemAPI.Query<RefRO<GhostOwnerIsLocal>>()
                 .WithAll<PlayerInputComponent>()
                 .WithEntityAccess())

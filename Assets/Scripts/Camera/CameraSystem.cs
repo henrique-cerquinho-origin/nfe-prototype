@@ -34,6 +34,7 @@ namespace Camera
             var job = new Job
             {
                 MainCameraEntity = SystemAPI.GetSingletonEntity<MainCameraEntityTag>(),
+                DeltaTime = SystemAPI.Time.DeltaTime,
                 LocalToWorldLookup = _localToWorldLookup,
                 LocalTransformLookup = _localTransformLookup
             };
@@ -44,6 +45,7 @@ namespace Camera
         public partial struct Job : IJobEntity
         {
             public Entity MainCameraEntity;
+            public float DeltaTime;
 
             [ReadOnly] public ComponentLookup<LocalToWorld> LocalToWorldLookup;
             // If you schedule parallel and you’re sure only one writer touches a given entity,
@@ -51,10 +53,14 @@ namespace Camera
             [NativeDisableParallelForRestriction]
             public ComponentLookup<LocalTransform> LocalTransformLookup;
 
-            public void Execute(in ThirdPersonCameraComponent camera, in CameraLookAtComponent lookAt)
+            public void Execute(ref ThirdPersonCameraComponent camera, in CameraLookAtComponent lookAt)
             {
                 if (!LocalToWorldLookup.HasComponent(lookAt.LookAt)) return;
-                LocalToWorld targetLTW = LocalToWorldLookup[lookAt.LookAt];
+                camera.CurrentLookAt = math.lerp(
+                    camera.CurrentLookAt,
+                    LocalToWorldLookup[lookAt.LookAt].Position,
+                    DeltaTime * 10
+                );
 
                 quaternion sphereRot = quaternion.Euler(
                     math.radians(camera.CurrentPhi),
@@ -65,7 +71,7 @@ namespace Camera
                 float3 camVec = math.mul(sphereRot, math.forward()) * camera.CurrentDistance;
 
                 LocalTransform camLT = LocalTransformLookup[MainCameraEntity];
-                camLT.Position = targetLTW.Position + camVec;
+                camLT.Position = camera.CurrentLookAt + camVec;
                 camLT.Rotation = quaternion.LookRotationSafe(-camVec, math.up());
                 LocalTransformLookup[MainCameraEntity] = camLT;
             }

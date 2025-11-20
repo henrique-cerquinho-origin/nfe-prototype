@@ -8,7 +8,6 @@ namespace Player
     public class PlayerAuthoring : MonoBehaviour
     {
         [SerializeField] public GameObject LookAt;
-        [SerializeField] public GameObject Mesh;
         
         public class Baker : Baker<PlayerAuthoring>
         {

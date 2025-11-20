@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Camera
 {
@@ -7,5 +8,6 @@ namespace Camera
         public float CurrentPhi;
         public float CurrentTheta;
         public float CurrentDistance;
+        public float3 CurrentLookAt;
     }
 }
