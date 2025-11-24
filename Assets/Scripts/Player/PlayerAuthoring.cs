@@ -16,6 +16,7 @@ namespace Player
                 // need to add this here because of ghosting!! it needs to be added at bake time
                 AddComponent(entity, new PlayerNetworkId());
                 AddComponent(entity, new PlayerInputComponent());
+                AddComponent(entity, new PlayerLocalInputComponent());
                 AddComponent(
                     entity,
                     new PlayerLookAtRefComponent { LookAt = GetEntity(authoring.LookAt, TransformUsageFlags.Dynamic) }

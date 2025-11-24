@@ -39,7 +39,8 @@ namespace Input
             var move = _defaultActionsMap.Move.ReadValue<Vector2>();
 
             var inputRef = SystemAPI.GetComponentRW<PlayerInputComponent>(targetPlayer);
-            inputRef.ValueRW.LookDelta = new float2(look.x, look.y);
+            var localInputRef = SystemAPI.GetComponentRW<PlayerLocalInputComponent>(targetPlayer);
+            localInputRef.ValueRW.LookDelta = new float2(look.x, look.y);
             inputRef.ValueRW.MoveDelta = new float2(move.x, move.y);
             inputRef.ValueRW.CurrentCameraAngle = thirdPersonCamera.CurrentTheta;
         }

@@ -34,15 +34,19 @@ namespace Camera
         {
             [NativeDisableParallelForRestriction]
             public ComponentLookup<ThirdPersonCameraComponent> CameraLookup;
-            
-            public void Execute(ref PlayerInputComponent playerInput, in PlayerCameraRefComponent playerCameraRef)
+
+            public void Execute(
+                ref PlayerInputComponent input,
+                ref PlayerLocalInputComponent localInput,
+                in PlayerCameraRefComponent playerCameraRef
+            )
             {
                 ThirdPersonCameraComponent camera = CameraLookup[playerCameraRef.Camera];
-                camera.CurrentTheta += playerInput.LookDelta.x;
+                camera.CurrentTheta += localInput.LookDelta.x;
                 if (camera.CurrentTheta >= 360) camera.CurrentTheta -= 360;
                 if (camera.CurrentTheta < 0) camera.CurrentTheta += 360;
                 
-                camera.CurrentPhi += playerInput.LookDelta.y;
+                camera.CurrentPhi += localInput.LookDelta.y;
                 camera.CurrentPhi = math.clamp(
                     camera.CurrentPhi,
                     -89.999f,
@@ -50,7 +54,7 @@ namespace Camera
                 );
                 CameraLookup[playerCameraRef.Camera] = camera;
 
-                playerInput.CurrentCameraAngle = camera.CurrentTheta;
+                input.CurrentCameraAngle = camera.CurrentTheta;
             }
         }
     }
