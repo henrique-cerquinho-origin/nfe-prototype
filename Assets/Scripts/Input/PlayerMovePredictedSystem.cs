@@ -32,13 +32,15 @@ namespace Input
             // var netTime = SystemAPI.GetSingleton<NetworkTime>();
             // bool isFinal = netTime.IsFinalPredictionTick;
 
-            var job = new Job();
+            var job = new Job { DeltaTime = SystemAPI.Time.fixedDeltaTime };
             state.Dependency = job.ScheduleParallel(state.Dependency);
         }
 
         [BurstCompile]
         private partial struct Job : IJobEntity
         {
+            public float DeltaTime;
+            
             [BurstCompile]
             public void Execute(
                 ref PhysicsMass mass,
@@ -56,7 +58,11 @@ namespace Input
                     input.MoveDelta.y * 10f
                 );
 
-                velocity.Linear  = math.mul(quaternion.Euler(0, yaw, 0), desiredVelocity);
+                velocity.Linear = math.lerp(
+                    velocity.Linear,
+                    math.mul(quaternion.Euler(0, yaw, 0), desiredVelocity),
+                    DeltaTime * 10
+                );
                 velocity.Angular = float3.zero;
                 mass.InverseInertia.xz = 0;
 
