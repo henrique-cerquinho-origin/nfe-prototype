@@ -1,8 +1,8 @@
+using Unity.Burst;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
 using Unity.Physics;
-using Unity.Transforms;
 
 namespace Input
 {
@@ -14,6 +14,7 @@ namespace Input
     [UpdateInGroup(typeof(PredictedFixedStepSimulationSystemGroup))]
     public partial struct PlayerMovePredictedSystem : ISystem
     {
+        [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<NetworkTime>();
@@ -24,31 +25,45 @@ namespace Input
                     .Build());
         }
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             // Safe to read on both; on server IsFinalPredictionTick is typically true.
-            var netTime = SystemAPI.GetSingleton<NetworkTime>();
-            bool isFinal = netTime.IsFinalPredictionTick;
+            // var netTime = SystemAPI.GetSingleton<NetworkTime>();
+            // bool isFinal = netTime.IsFinalPredictionTick;
 
-            foreach (var (massRef, velocityRef, inputRef) in SystemAPI
-                .Query<RefRW<PhysicsMass>, RefRW<PhysicsVelocity>, RefRO<PlayerInputComponent>>()
-                .WithAll<Simulate>())
+            var job = new Job();
+            state.Dependency = job.ScheduleParallel(state.Dependency);
+        }
+
+        [BurstCompile]
+        private partial struct Job : IJobEntity
+        {
+            [BurstCompile]
+            public void Execute(
+                ref PhysicsMass mass,
+                ref PhysicsVelocity velocity,
+                in PlayerInputComponent input,
+                EnabledRefRO<Simulate> simulate
+            )
             {
-                float yaw = math.radians(inputRef.ValueRO.CurrentCameraAngle + 180f);
+                if (!simulate.ValueRO) return;
+                
+                float yaw = math.radians(input.CurrentCameraAngle + 180f);
                 var desiredVelocity = new float3(
-                    inputRef.ValueRO.MoveDelta.x * 10f,
-                    velocityRef.ValueRW.Linear.y,
-                    inputRef.ValueRO.MoveDelta.y * 10f
+                    input.MoveDelta.x * 10f,
+                    velocity.Linear.y,
+                    input.MoveDelta.y * 10f
                 );
 
-                velocityRef.ValueRW.Linear  = math.mul(quaternion.Euler(0, yaw, 0), desiredVelocity);
-                velocityRef.ValueRW.Angular = float3.zero;
-                massRef.ValueRW.InverseInertia.xz = 0;
+                velocity.Linear  = math.mul(quaternion.Euler(0, yaw, 0), desiredVelocity);
+                velocity.Angular = float3.zero;
+                mass.InverseInertia.xz = 0;
 
-                if (isFinal)
-                {
-                    // One-shot side effects (VFX/sounds). Avoid anything that would be replayed on resim.
-                }
+                // if (isFinal)
+                // {
+                //     // One-shot side effects (VFX/sounds). Avoid anything that would be replayed on resim.
+                // }
             }
         }
     }
