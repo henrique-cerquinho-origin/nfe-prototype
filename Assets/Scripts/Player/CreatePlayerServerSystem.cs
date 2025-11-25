@@ -22,7 +22,7 @@ namespace Player
         {
             var references = SystemAPI.GetSingleton<ReferencesComponent>();
             var ecb = new EntityCommandBuffer(Allocator.Temp);
-            foreach ((var networkIdRef, var connectionEntity) in SystemAPI.Query<RefRO<NetworkId>>()
+            foreach (var (networkIdRef, connectionEntity) in SystemAPI.Query<RefRO<NetworkId>>()
                 .WithNone<ConnectionPlayerRefComponent>()
                 .WithEntityAccess())
             {

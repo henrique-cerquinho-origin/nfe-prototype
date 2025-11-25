@@ -17,10 +17,6 @@ namespace Player
                 AddComponent(entity, new PlayerNetworkId());
                 AddComponent(entity, new PlayerInputComponent());
                 AddComponent(entity, new PlayerLocalInputComponent());
-                AddComponent(
-                    entity,
-                    new PlayerLookAtRefComponent { LookAt = GetEntity(authoring.LookAt, TransformUsageFlags.Dynamic) }
-                );
             }
         }
     }

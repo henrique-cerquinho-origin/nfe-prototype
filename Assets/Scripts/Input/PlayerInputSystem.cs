@@ -1,5 +1,3 @@
-using Camera;
-using Player;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.NetCode;
@@ -22,15 +20,12 @@ namespace Input
             _defaultActionsMap = inputActions.Player;
 
             RequireForUpdate<CommandTarget>();
-            RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerCameraRefComponent>().Build());
         }
 
         protected override void OnUpdate()
         {
             Entity cmdTargetEnt = SystemAPI.GetSingletonEntity<CommandTarget>();
             Entity targetPlayer = SystemAPI.GetComponentRO<CommandTarget>(cmdTargetEnt).ValueRO.targetEntity;
-            Entity cameraEntity = SystemAPI.GetComponentRO<PlayerCameraRefComponent>(targetPlayer).ValueRO.Camera;
-            var thirdPersonCamera = SystemAPI.GetComponent<ThirdPersonCameraComponent>(cameraEntity);
             if (targetPlayer == Entity.Null) return;
 
             Vector2 look = _defaultActionsMap.Look.IsPressed()
@@ -42,7 +37,6 @@ namespace Input
             var localInputRef = SystemAPI.GetComponentRW<PlayerLocalInputComponent>(targetPlayer);
             localInputRef.ValueRW.LookDelta = new float2(look.x, look.y);
             inputRef.ValueRW.MoveDelta = new float2(move.x, move.y);
-            inputRef.ValueRW.CurrentCameraAngle = thirdPersonCamera.CurrentTheta;
         }
     }
 }

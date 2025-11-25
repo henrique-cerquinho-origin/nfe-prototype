@@ -158,6 +158,7 @@ GameObject:
   - component: {fileID: 3571196111660704531}
   - component: {fileID: -2522593924045180119}
   - component: {fileID: 4433802457115724935}
+  - component: {fileID: 4296347146392217063}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -272,3 +273,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6337f1896c844784bcb381d1cb5d5adc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player.PhysicsSmoothingAuthoring
+--- !u!114 &4296347146392217063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8542548765367978857}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 804c627084bc45d8b4ea989f07d105c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Camera.CameraTargetAuthoring
+  LookAt: {fileID: 2341008599863298322}

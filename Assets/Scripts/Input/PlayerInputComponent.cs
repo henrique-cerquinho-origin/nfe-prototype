@@ -6,6 +6,6 @@ namespace Input
     public struct PlayerInputComponent : IInputComponentData
     {
         public float2 MoveDelta;
-        public float CurrentCameraAngle;
+        public float CurrentCameraTheta;
     }
 }

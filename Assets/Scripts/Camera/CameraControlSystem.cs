@@ -1,60 +1,81 @@
 using Input;
-using Player;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.NetCode;
+using Unity.Transforms;
 
 namespace Camera
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
-    // [UpdateInGroup(typeof(VariableRateSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostInputSystemGroup))]
     [UpdateAfter(typeof(PlayerInputSystem))]
     public partial struct CameraControlSystem : ISystem
     {
-        private ComponentLookup<ThirdPersonCameraComponent> _cameraLookup;
-        
+        private ComponentLookup<CameraTargetComponent> _cameraLookup;
+        private ComponentLookup<LocalToWorld> _localToWorldLookup;
+        private ComponentLookup<LocalTransform> _localTransformLookup;
+
         public void OnCreate(ref SystemState state)
         {
-            state.RequireForUpdate(
-                SystemAPI.QueryBuilder()
-                    .WithAll<PlayerInputComponent, PlayerCameraRefComponent>()
-                    .Build()
-            );
-            _cameraLookup = state.GetComponentLookup<ThirdPersonCameraComponent>();
+            state.RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent>().Build());
+            state.RequireForUpdate<ActiveCameraTargetComponent>();
+            _cameraLookup = state.GetComponentLookup<CameraTargetComponent>(true);
+            _localTransformLookup = state.GetComponentLookup<LocalTransform>();
+            _localToWorldLookup = state.GetComponentLookup<LocalToWorld>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
             _cameraLookup.Update(ref state);
-            var job = new Job { CameraLookup = _cameraLookup };
+            _localToWorldLookup.Update(ref state);
+            _localTransformLookup.Update(ref state);
+            var job = new Job
+            {
+                CameraTargetLookup = _cameraLookup,
+                LocalTransformLookup = _localTransformLookup,
+                LocalToWorldLookup = _localToWorldLookup,
+                ActiveCameraTargetEntity = SystemAPI.GetSingleton<ActiveCameraTargetComponent>().Target,
+                CameraLookAtBridgeEntity = SystemAPI.GetSingletonEntity<ActiveCameraTargetComponent>()
+            };
             state.Dependency = job.ScheduleParallel(state.Dependency);
         }
 
         private partial struct Job : IJobEntity
         {
-            [NativeDisableParallelForRestriction]
-            public ComponentLookup<ThirdPersonCameraComponent> CameraLookup;
+            public Entity ActiveCameraTargetEntity;
+            public Entity CameraLookAtBridgeEntity;
+            [ReadOnly] public ComponentLookup<CameraTargetComponent> CameraTargetLookup;
+            [ReadOnly] public ComponentLookup<LocalToWorld> LocalToWorldLookup;
+            [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> LocalTransformLookup;
 
             public void Execute(
                 ref PlayerInputComponent input,
-                ref PlayerLocalInputComponent localInput,
-                in PlayerCameraRefComponent playerCameraRef
+                in PlayerLocalInputComponent localInput
             )
             {
-                ThirdPersonCameraComponent camera = CameraLookup[playerCameraRef.Camera];
-                camera.CurrentTheta += localInput.LookDelta.x;
-                if (camera.CurrentTheta >= 360) camera.CurrentTheta -= 360;
-                if (camera.CurrentTheta < 0) camera.CurrentTheta += 360;
-                
-                camera.CurrentPhi += localInput.LookDelta.y;
-                camera.CurrentPhi = math.clamp(
-                    camera.CurrentPhi,
-                    -89.999f,
-                    89.999f
-                );
-                CameraLookup[playerCameraRef.Camera] = camera;
+                CameraTargetComponent activeCameraTarget = CameraTargetLookup[ActiveCameraTargetEntity];
+                LocalTransform lookAtBridgeTransform = LocalTransformLookup[CameraLookAtBridgeEntity];
+                lookAtBridgeTransform.Position = LocalToWorldLookup[activeCameraTarget.LookAtEntity].Position;
 
-                input.CurrentCameraAngle = camera.CurrentTheta;
+                float3 forward = math.mul(lookAtBridgeTransform.Rotation, math.forward());
+
+                float theta = math.atan2(forward.x, forward.z);
+                float phi = math.asin(math.clamp(forward.y, -1f, 1f));
+
+                phi += math.radians(localInput.LookDelta.y);
+                theta += math.radians(localInput.LookDelta.x);
+
+                float phiLimit = math.radians(89.999f);
+                phi = math.clamp(phi, -phiLimit, phiLimit);
+
+                float cp = math.cos(phi);
+                var dir = new float3(math.sin(theta) * cp, math.sin(phi), math.cos(theta) * cp);
+
+                lookAtBridgeTransform.Rotation = quaternion.LookRotationSafe(dir, math.up());
+
+                LocalTransformLookup[CameraLookAtBridgeEntity] = lookAtBridgeTransform;
+                input.CurrentCameraTheta = theta;
             }
         }
     }

@@ -51,7 +51,7 @@ namespace Input
             {
                 if (!simulate.ValueRO) return;
                 
-                float yaw = math.radians(input.CurrentCameraAngle + 180f);
+                float theta = input.CurrentCameraTheta;
                 var desiredVelocity = new float3(
                     input.MoveDelta.x * 10f,
                     velocity.Linear.y,
@@ -60,7 +60,7 @@ namespace Input
 
                 velocity.Linear = math.lerp(
                     velocity.Linear,
-                    math.mul(quaternion.Euler(0, yaw, 0), desiredVelocity),
+                    math.mul(quaternion.Euler(0, theta, 0), desiredVelocity),
                     DeltaTime * 10
                 );
                 velocity.Angular = float3.zero;
