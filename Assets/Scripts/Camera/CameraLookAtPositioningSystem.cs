@@ -50,6 +50,8 @@ namespace Camera
 
             public void Execute()
             {
+                if (ActiveCameraTargetEntity == Entity.Null) return;
+                
                 CameraTargetComponent activeCameraTarget = CameraTargetLookup[ActiveCameraTargetEntity];
                 LocalTransform lookAtBridgeTransform = LocalTransformLookup[CameraLookAtBridgeEntity];
                 lookAtBridgeTransform.Position = LocalToWorldLookup[activeCameraTarget.LookAtEntity].Position;

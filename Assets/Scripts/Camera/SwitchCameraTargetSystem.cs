@@ -5,7 +5,8 @@ using Unity.NetCode;
 namespace Camera
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.LocalSimulation)]
-    [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
+    [UpdateInGroup(typeof(GhostInputSystemGroup))]
+    [UpdateAfter(typeof(PlayerInputSystem))]
     public partial struct SwitchCameraTargetSystem : ISystem
     {
         public void OnCreate(ref SystemState state)
@@ -16,14 +17,18 @@ namespace Camera
         
         public void OnUpdate(ref SystemState state)
         {
-            var activeCameraTargetRef = SystemAPI.GetSingletonRW<ActiveCameraTargetComponent>();
+            var cameraStateRef = SystemAPI.GetSingletonRW<CameraStateComponent>();
 
-            foreach (var (_, entity) in SystemAPI.Query<RefRO<PlayerInputComponent>>()
-                .WithAll<GhostOwnerIsLocal, CameraTargetComponent>()
-                .WithEntityAccess())
+            foreach (var inputRef in SystemAPI.Query<RefRO<PlayerInputComponent>>()
+                .WithAll<GhostOwnerIsLocal, CameraTargetComponent>())
             {
-                activeCameraTargetRef.ValueRW.Target = entity;
-                break;
+                if (inputRef.ValueRO.SwitchCamera.IsSet)
+                {
+                    cameraStateRef.ValueRW.Desired = cameraStateRef.ValueRO.Current == CameraType.Adventure
+                        ? CameraType.Aiming
+                        : CameraType.Adventure;
+                }
+                return;
             }
         }
     }

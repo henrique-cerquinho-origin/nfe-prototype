@@ -11,6 +11,9 @@ namespace Camera
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<ActiveCameraTargetComponent>();
+            state.RequireForUpdate(
+                SystemAPI.QueryBuilder().WithAll<GhostOwnerIsLocal, CameraTargetComponent>().Build()
+            );
         }
         
         public void OnUpdate(ref SystemState state)

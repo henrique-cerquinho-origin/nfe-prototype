@@ -1,26 +1,27 @@
-using Camera;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 using Unity.Entities;
 using UnityEngine;
 
-public class CameraReferencesAuthoring : MonoBehaviour
+namespace Camera
 {
-    [SerializeField] public CinemachineCamera PlayerCamera;
-    [SerializeField] public CinemachineCamera CubeCamera;
-    
-    public class Baker : Baker<CameraReferencesAuthoring>
+    public class CameraReferencesAuthoring : MonoBehaviour
     {
-        public override void Bake(CameraReferencesAuthoring authoring)
+        [SerializeField] public CinemachineCamera AdventureCamera;
+        [SerializeField] public CinemachineCamera AimingCamera;
+    
+        public class Baker : Baker<CameraReferencesAuthoring>
         {
-            Entity entity = GetEntity(TransformUsageFlags.None);
-            AddComponentObject(
-                entity,
-                new CameraReferencesComponent
+            public override void Bake(CameraReferencesAuthoring authoring)
+            {
+                Entity entity = GetEntity(TransformUsageFlags.None);
+                var cameras = new Dictionary<CameraType, CinemachineCamera>
                 {
-                    PlayerCamera = authoring.PlayerCamera,
-                    CubeCamera = authoring.CubeCamera
-                }
-            );
+                    { CameraType.Adventure, authoring.AdventureCamera },
+                    { CameraType.Aiming, authoring.AimingCamera }
+                };
+                AddComponentObject(entity, new CameraReferencesComponent { Cameras = cameras });
+            }
         }
     }
 }

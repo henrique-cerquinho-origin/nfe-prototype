@@ -42,6 +42,10 @@ namespace Input
             {
                 inputRef.ValueRW.SwitchCamera.Set();
             }
+            else
+            {
+                inputRef.ValueRW.SwitchCamera.Count = 0;
+            }
         }
     }
 }

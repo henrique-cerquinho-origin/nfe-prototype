@@ -10,17 +10,18 @@ namespace Camera
         protected override void OnCreate()
         {
             RequireForUpdate<ActiveCameraTargetComponent>();
-            RequireForUpdate<CinemachineBridgeComponent>();
+            RequireForUpdate<CameraRigRuntimeComponent>();
         }
 
         protected override void OnUpdate()
         {
-            var activeCameraTarget = SystemAPI.GetSingletonEntity<ActiveCameraTargetComponent>();
-            var targetLTW = SystemAPI.GetComponent<LocalToWorld>(activeCameraTarget);
-            foreach (var cameraLookAtBridge in SystemAPI.Query<CinemachineBridgeComponent>())
+            foreach (var cameraLookAtBridge in SystemAPI.Query<CameraRigRuntimeComponent>())
             {
-                cameraLookAtBridge.LookAtTransform.position = targetLTW.Position;
-                cameraLookAtBridge.LookAtTransform.rotation = targetLTW.Rotation;
+                var activeCameraTarget = SystemAPI.GetSingletonEntity<ActiveCameraTargetComponent>();
+                var targetLTW = SystemAPI.GetComponent<LocalToWorld>(activeCameraTarget);
+                cameraLookAtBridge.LookAt.position = targetLTW.Position;
+                cameraLookAtBridge.LookAt.rotation = targetLTW.Rotation;
+                break;
             }
         }
     }
