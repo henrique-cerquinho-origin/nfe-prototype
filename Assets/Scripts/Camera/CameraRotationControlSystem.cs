@@ -9,33 +9,24 @@ namespace Camera
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.ThinClientSimulation)]
     [UpdateInGroup(typeof(GhostInputSystemGroup))]
-    [UpdateAfter(typeof(PlayerInputSystem))]
-    public partial struct CameraControlSystem : ISystem
+    [UpdateAfter(typeof(CameraLookAtPositioningSystem))]
+    public partial struct CameraRotationControlSystem : ISystem
     {
-        private ComponentLookup<CameraTargetComponent> _cameraLookup;
-        private ComponentLookup<LocalToWorld> _localToWorldLookup;
         private ComponentLookup<LocalTransform> _localTransformLookup;
 
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate(SystemAPI.QueryBuilder().WithAll<PlayerInputComponent>().Build());
             state.RequireForUpdate<ActiveCameraTargetComponent>();
-            _cameraLookup = state.GetComponentLookup<CameraTargetComponent>(true);
             _localTransformLookup = state.GetComponentLookup<LocalTransform>();
-            _localToWorldLookup = state.GetComponentLookup<LocalToWorld>();
         }
 
         public void OnUpdate(ref SystemState state)
         {
-            _cameraLookup.Update(ref state);
-            _localToWorldLookup.Update(ref state);
             _localTransformLookup.Update(ref state);
             var job = new Job
             {
-                CameraTargetLookup = _cameraLookup,
                 LocalTransformLookup = _localTransformLookup,
-                LocalToWorldLookup = _localToWorldLookup,
-                ActiveCameraTargetEntity = SystemAPI.GetSingleton<ActiveCameraTargetComponent>().Target,
                 CameraLookAtBridgeEntity = SystemAPI.GetSingletonEntity<ActiveCameraTargetComponent>()
             };
             state.Dependency = job.ScheduleParallel(state.Dependency);
@@ -43,20 +34,12 @@ namespace Camera
 
         private partial struct Job : IJobEntity
         {
-            public Entity ActiveCameraTargetEntity;
             public Entity CameraLookAtBridgeEntity;
-            [ReadOnly] public ComponentLookup<CameraTargetComponent> CameraTargetLookup;
-            [ReadOnly] public ComponentLookup<LocalToWorld> LocalToWorldLookup;
             [NativeDisableParallelForRestriction] public ComponentLookup<LocalTransform> LocalTransformLookup;
 
-            public void Execute(
-                ref PlayerInputComponent input,
-                in PlayerLocalInputComponent localInput
-            )
+            public void Execute(ref PlayerInputComponent input, in PlayerLocalInputComponent localInput)
             {
-                CameraTargetComponent activeCameraTarget = CameraTargetLookup[ActiveCameraTargetEntity];
                 LocalTransform lookAtBridgeTransform = LocalTransformLookup[CameraLookAtBridgeEntity];
-                lookAtBridgeTransform.Position = LocalToWorldLookup[activeCameraTarget.LookAtEntity].Position;
 
                 float3 forward = math.mul(lookAtBridgeTransform.Rotation, math.forward());
 

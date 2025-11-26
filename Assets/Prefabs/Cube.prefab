@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4380479789121363234}
   - component: {fileID: 1226275958356919616}
   - component: {fileID: 5289318864211836122}
+  - component: {fileID: 2811538265127706785}
   m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
@@ -179,3 +180,15 @@ MonoBehaviour:
   UseSingleBaseline: 0
   RollbackPredictedSpawnedGhostState: 0
   RollbackPredictionOnStructuralChanges: 1
+--- !u!114 &2811538265127706785
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4966280659492494183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6337f1896c844784bcb381d1cb5d5adc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Player.PhysicsSmoothingAuthoring

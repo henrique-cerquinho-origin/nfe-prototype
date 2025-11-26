@@ -15,7 +15,8 @@ namespace Camera
                 Entity entity = GetEntity(TransformUsageFlags.None);
                 AddComponent(
                     entity,
-                    new CameraTargetComponent { LookAtEntity = GetEntity(authoring.LookAt, TransformUsageFlags.Dynamic) }
+                    new CameraTargetComponent
+                        { LookAtEntity = GetEntity(authoring.LookAt, TransformUsageFlags.Dynamic) }
                 );
             }
         }
