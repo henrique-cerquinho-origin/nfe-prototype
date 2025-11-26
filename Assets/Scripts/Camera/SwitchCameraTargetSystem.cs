@@ -1,4 +1,4 @@
-using Player;
+using Input;
 using Unity.Entities;
 using Unity.NetCode;
 
@@ -6,16 +6,19 @@ namespace Camera
 {
     [WorldSystemFilter(WorldSystemFilterFlags.ClientSimulation | WorldSystemFilterFlags.LocalSimulation)]
     [UpdateInGroup(typeof(PredictedSimulationSystemGroup))]
-    public partial struct SetCameraTargetOnSpawnSystem : ISystem
+    public partial struct SwitchCameraTargetSystem : ISystem
     {
+        public void OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<ActiveCameraTargetComponent>();
+            state.RequireForUpdate<PlayerInputComponent>();
+        }
+        
         public void OnUpdate(ref SystemState state)
         {
-            if (!SystemAPI.HasSingleton<ActiveCameraTargetComponent>()) return;
-
             var activeCameraTargetRef = SystemAPI.GetSingletonRW<ActiveCameraTargetComponent>();
-            if (activeCameraTargetRef.ValueRO.Target != Entity.Null) return;
 
-            foreach (var (_, entity) in SystemAPI.Query<RefRO<PlayerNetworkId>>()
+            foreach (var (_, entity) in SystemAPI.Query<RefRO<PlayerInputComponent>>()
                 .WithAll<GhostOwnerIsLocal, CameraTargetComponent>()
                 .WithEntityAccess())
             {

@@ -7,5 +7,6 @@ namespace Input
     {
         public float2 MoveDelta;
         public float CurrentCameraTheta;
+        public InputEvent SwitchCamera;
     }
 }

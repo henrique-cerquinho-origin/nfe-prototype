@@ -37,6 +37,11 @@ namespace Input
             var localInputRef = SystemAPI.GetComponentRW<PlayerLocalInputComponent>(targetPlayer);
             localInputRef.ValueRW.LookDelta = new float2(look.x, look.y);
             inputRef.ValueRW.MoveDelta = new float2(move.x, move.y);
+
+            if (_defaultActionsMap.Crouch.WasPressedThisFrame())
+            {
+                inputRef.ValueRW.SwitchCamera.Set();
+            }
         }
     }
 }
