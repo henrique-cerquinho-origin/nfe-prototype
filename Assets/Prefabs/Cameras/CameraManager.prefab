@@ -44,5 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674a769a6ca942a394bbed5f574a1c56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraReferencesAuthoring
-  AdventureCamera: {fileID: 8085855270073162499, guid: c8d37405812df4db494ef9f4d18a2279, type: 3}
-  AimingCamera: {fileID: 8085855270073162499, guid: fe75eb36bfc85495c9d649c8ca3b7961, type: 3}
+  Cameras:
+  - Type: 0
+    Camera: {fileID: 8085855270073162499, guid: c8d37405812df4db494ef9f4d18a2279, type: 3}
+  - Type: 1
+    Camera: {fileID: 8085855270073162499, guid: fe75eb36bfc85495c9d649c8ca3b7961, type: 3}
